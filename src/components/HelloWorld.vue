@@ -1,105 +1,107 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br />
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener"
-        >vue-cli documentation</a
-      >.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li>
-        <a
-          href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel"
-          target="_blank"
-          rel="noopener"
-          >babel</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-typescript"
-          target="_blank"
-          rel="noopener"
-          >typescript</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint"
-          target="_blank"
-          rel="noopener"
-          >eslint</a
-        >
-      </li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li>
-        <a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a>
-      </li>
-      <li>
-        <a href="https://forum.vuejs.org" target="_blank" rel="noopener"
-          >Forum</a
-        >
-      </li>
-      <li>
-        <a href="https://chat.vuejs.org" target="_blank" rel="noopener"
-          >Community Chat</a
-        >
-      </li>
-      <li>
-        <a href="https://twitter.com/vuejs" target="_blank" rel="noopener"
-          >Twitter</a
-        >
-      </li>
-      <li>
-        <a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a>
-      </li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li>
-        <a href="https://router.vuejs.org" target="_blank" rel="noopener"
-          >vue-router</a
-        >
-      </li>
-      <li>
-        <a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a>
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/vue-devtools#vue-devtools"
-          target="_blank"
-          rel="noopener"
-          >vue-devtools</a
-        >
-      </li>
-      <li>
-        <a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener"
-          >vue-loader</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/awesome-vue"
-          target="_blank"
-          rel="noopener"
-          >awesome-vue</a
-        >
-      </li>
-    </ul>
-  </div>
+	<div class="hello">
+		<p>{{ name }}{{ age }}{{ isMarried }}</p>
+		<p>{{ cName }}</p>
+		<p>{{ propC }}</p>
+		<p>{{ propD }}</p>
+		<h1>{{ msg }},{{ tel }}</h1>
+		<p>count:{{ count }}</p>
+		<button @click="handleClick">count++</button>
+		<p>count1:{{ count1 }}</p>
+		<button @click="handleClick1">count1++</button>
+	</div>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { mixins } from 'vue-class-component';
+import { Component, Prop, PropSync, Vue, Watch, Emit } from 'vue-property-decorator';
+import myMixins from '../mixins/mixins';
+import myMixins1 from '../mixins/mixins1';
 
-@Component
-export default class HelloWorld extends Vue {
-  @Prop() private msg!: string;
+class Animal {
+	name: string;
+	constructor(theName: string) {
+		this.name = theName;
+	}
+	move(distanceInMeters: number = 0) {
+		console.log(`${this.name} moved ${distanceInMeters}m.`);
+	}
+}
+class Snake extends Animal {
+	constructor(name: string) {
+		super(name);
+	}
+	move(distanceInMeters = 5) {
+		console.log('Slithering...');
+		super.move(distanceInMeters);
+	}
+}
+class Horse extends Animal {
+	constructor(name: string) {
+		super(name);
+	}
+	move(distanceInMeters: number = 200) {
+		console.log('Horse。。。。');
+		super.move(distanceInMeters);
+	}
+}
+
+@Component({
+	mixins: [myMixins],
+})
+export default class HelloWorld extends mixins(myMixins1) {
+	@Prop() msg!: string;
+	@Prop({ default: 'default value' })
+	tel!: string;
+	@Prop([String, Boolean])
+	propC!: string | boolean;
+
+	// @Prop()
+	// propD!: Object;
+	@PropSync('propD1', { type: String, default: 'propd' }) propD!: string;
+
+	age: number = 22;
+	name: string = 'jerry';
+	isMarried: boolean = false;
+	list1: number[] = [1, 2, 3, 4];
+	list2: Array<number> = [1, 2, 1, 2];
+	list4: Array<string> = ['1', '2', '3'];
+	list3: any[] = [1, 2, '3', { a: 1 }];
+	count: number = 0;
+	count1: number = 0;
+
+	@Emit('btnClick')
+	handleClick1() {
+		return this.count1++;
+	}
+	@Watch('count')
+	getCount(newValue: string, oldVal: string) {
+		// console.log(newValue, oldVal, 'newval-oldval');
+	}
+	@Watch('count1')
+	getCount1(newValue: string, oldVal: string) {
+		// console.log(newValue, oldVal, 'newval-oldval');
+	}
+	get cName() {
+		return this.name + '123';
+	}
+	created() {
+		console.log(11111);
+		// console.log(this.mixinsValue,'mixinsValue')
+		console.log(this.mixinsValue1, 'mixinsValue1');
+		console.log(22222);
+	}
+	mounted(): void {
+		// console.log(this.msg,'msg')
+		// let sam = new Snake("Sammy the Python");
+		// let horse = new Horse('horseTom')
+		// sam.move();
+		// horse.move(200)
+	}
+	handleClick() {
+		// console.log('handleclick');
+		this.count++;
+	}
 }
 </script>
 
