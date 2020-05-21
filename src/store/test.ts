@@ -17,3 +17,23 @@
 //     actions,
 //     mutations
 // }
+import { Commit } from "vuex";
+const state: any = {
+  testData: 0
+}
+const mutations: any = {
+  setTestData(state: any, params: object) {
+    state.testData = params;
+  }
+}
+const actions: any = {
+  setTestDataFn(context: { commit: Commit }, params: object){
+    context.commit("setTestData", params);
+  }
+}
+export default {
+  namespaced: true,
+  state,
+  actions,
+  mutations
+}
